@@ -1,0 +1,79 @@
+generator client { provider = "prisma-client-js" }
+datasource db {
+ provider = "postgresql"
+ url = env("DATABASE_URL")
+}
+model Request {
+ id String @id @default(cuid())
+ seq Int @unique @default(autoincrement())
+ ref String? @unique
+ name String
+ email String
+ phone String
+ org String
+ field String?
+ level String
+ category String
+ service String
+ title String
+ description String
+ tools String?
+ deadline String
+ via String
+ budget String?
+ status String @default("New Request")
+ quote String?
+ notes String?
+ files Attachment[]
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([status])
+ @@index([email])
+}
+model Attachment {
+ id String @id @default(cuid())
+ requestId String
+ request Request @relation(fields:[requestId],references:[id],onDelete:Cascade)
+ name String
+ url String
+ size Int
+}
+model Enquiry {
+ id String @id @default(cuid())
+ name String
+ email String
+ phone String?
+ subject String
+ message String
+ createdAt DateTime @default(now())
+}
+model Subscriber {
+ id String @id @default(cuid())
+ email String @unique
+ token String @unique @default(cuid())
+ confirmed Boolean @default(false)
+ createdAt DateTime @default(now())
+}
+model Post {
+ id String @id @default(cuid())
+ title String
+ category String @default("General")
+ body String
+ published Boolean @default(false)
+ publishAt DateTime @default(now())
+ createdAt DateTime @default(now())
+}
+model Media {
+ id String @id @default(cuid())
+ name String
+ url String
+ alt String?
+ createdAt DateTime @default(now())
+}
+model AuditLog {
+ id String @id @default(cuid())
+ action String
+ detail String
+ createdAt DateTime @default(now())
+ @@index([createdAt])
+}
